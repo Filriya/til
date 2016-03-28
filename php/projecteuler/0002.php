@@ -1,7 +1,7 @@
 <?php
-function fibo($sum, $a, $b) {
+function fibo($max, $sum, $a = 1, $b = 2) {
     $c = $a + $b;
-    if ($c > 4000000) {
+    if ($c >  $max) {
         return $sum;
     } else if($c % 2 == 0) {
         $sum += $c;
@@ -9,4 +9,5 @@ function fibo($sum, $a, $b) {
     return fibo($sum, $b, $c);
 }
 
-echo fibo(2, 1, 2);
+echo fibo(4000);
+

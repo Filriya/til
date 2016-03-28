@@ -1,4 +1,30 @@
 <?php
+function remove_protocol($str)
+{
+  $pattern = "/^(http:|https:)/";
+  echo(preg_replace($pattern, "", $str));
+}
+
+$str = "http://www.secondpress.us";
+$str2 = "https://www.secondpress.us";
+
+remove_protocol($str);
+echo "\n";
+remove_protocol($str2);
+
+//$arr = [15317,
+//15393,
+//13267,
+//13267,
+//13190,
+//13178,
+//12744,
+//12730,
+//12706,
+//12701,];
+//
+//echo (array_sum($arr) * 1.3 / 2);
+
 //$array = array('10', '15', '20', '25', '30');
 //
 //function total_with_for($array) {
