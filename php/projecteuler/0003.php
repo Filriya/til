@@ -18,3 +18,4 @@ function factorization($val, $arr = array()) {
 }
 
 var_dump((factorization(600851475143)));
+
