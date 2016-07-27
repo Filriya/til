@@ -1,0 +1,23 @@
+.hoge {
+  text-stroke: 1px #000;
+  background: white;
+}
+.content1 { background: url("/images/test/icon_ai.png")};
+.content1 { background: url("/images/test/icon_contact_on.png")}
+.content1 { background: url("/images/test/icon_footer_calendar.png")}
+.content1 { background: url("/images/test/icon_footer_contact.png")}
+.content1 { background: url("/images/test/icon_footer_orderform.png")}
+.content1 { background: url("/images/test/icon_footer_template.png")}
+.content1 { background: url("/images/test/icon_help.png")}
+.content1 { background: url("/images/test/icon_logo_mark.png")}
+.content1 { background: url("/images/test/icon_logo_text.png")}
+.content1 { background: url("/images/test/icon_orderform.png")}
+.content1 { background: url("/images/test/icon_orderform_on.png")}
+.content1 { background: url("/images/test/icon_ps.png")}
+.content1 { background: url("/images/test/icon_template_download.png")}
+.content1 { background: url("/images/test/image_business_hours.png")}
+.content1 { background: url("/images/test/image_phone_number.png")}
+.content1 { background: url("/images/test/logo_customer_support.png")}
+.content1 { background: url("/images/test/logo_noht_bottom.png")}
+.content1 { background: url("/images/test/logo_top_gray.png")}
+.content1 { background: url("/images/test/logo_topic_path.png")}
