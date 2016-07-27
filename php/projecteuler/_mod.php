@@ -56,8 +56,20 @@ function isPandigital($num) {
     return count($arr) == count(array_unique($arr)) && $arr[count($arr) - 1] == count($arr);
 }
 
+function isPalindromic($str) {
+    return strval($str) == strrev(strval($str));
+}
+
 function countDigits($num) {
     return strlen(strval($num));
+}
+
+function hasSameDigits($a, $b) {
+    $aList = str_split(strval($a));
+    sort($aList);
+    $bList = str_split(strval($b));
+    sort($bList);
+    return $aList == $bList;
 }
 
 
