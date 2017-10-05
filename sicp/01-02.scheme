@@ -1,0 +1,308 @@
+(define (factorial n) (fact-iter 1 1 n))
+
+(define (fact-iter product counter max-count) 
+  (if (> counter max-count)
+    product
+    (fact-iter (* counter product) (+ counter 1) max-count)))
+
+
+;ex 1.10
+(define (A x y) 
+  (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+  (else (A (- x 1) (A x (- y 1))))))
+
+(define (f n) (A 0 n)) ;2n
+(define (g n) (A 1 n)) ;2^n
+(define (h n) (A 2 n)) ;2^2^2....とn回繰り返す
+(define (k n) (* 5 n n)) ;5n^2
+
+;1.2.2
+(define (count-change amount) (cc amount 5))
+
+(define (cc amount kinds-of-coins)
+  (cond ((= amount 0) 1)
+        ((or (< amount 0) (= kinds-of-coins 0)) 0)
+        (else (+ (cc amount (- kinds-of-coins 1))
+                 (cc (- amount (first-denomination kinds-of-coins)) kinds-of-coins)))))
+
+(define (first-denomination kinds-of-coins)
+        (cond ((= kinds-of-coins 1) 1)
+              ((= kinds-of-coins 2) 5)
+              ((= kinds-of-coins 3) 10)
+              ((= kinds-of-coins 4) 25)
+              ((= kinds-of-coins 5) 50)))
+
+
+;ex 1.11
+(define (f1 n) 
+  (cond ((< n 3) n)
+        (else (+ (f1 (- n 1)) (* 2 (f1 (- n 2))) (* 3 (f1 (- n 3)))))))
+
+
+(define (f2 n) 
+  (f2-iter 2 1 0 (- n 2)))
+
+(define (f2-iter a b c count)
+  (if (= count 0) a (f2-iter (+ a (* 2 b) (* 3 c)) a b (- count 1))))
+
+
+;ex 1.12
+
+(define (pascal n)
+  (pascal-iter n 0))
+
+(define (pascal-iter n count)
+  (if (= n count) (newline)
+  (begin 
+    (display (pascal-number n count))
+    (display " ")
+    (pascal-iter n (+ count 1))
+    )))
+
+(define (pascal-elem n i)
+  (if (or (= i 0) (= i (- n 1))) 
+    1
+    (+ (pascal-elem (- n 1) (- i 1)) (pascal-number (- n 1) i))))
+
+;ex 1.15
+(define (cube x) (* x x x))
+(define (p x) (- (* 3 x) (* 4 (cube x))))
+(define (sine angle)
+  (display angle)
+  (newline)
+  (if (not (> (abs angle) 0.1))
+    angle
+    (p (sine (/ angle 3.0)))))
+
+
+(define (cube x) (* x x x)) 
+(define (p x) (print x) (- (* 3 x) (* 4 (cube x)))) 
+(define (sine angle) 
+  (if (not (> (abs angle) 0.1)) angle 
+    (p (sine (/ angle 3.0)))))
+
+;ex 1.16
+
+(define (expt b n) 
+  (expt-iter 1 b n))
+
+(define (expt-iter a b n)
+  (cond ((= n 0) a)
+        ((even? n) (expt-iter a (square b) (/ n 2)))
+        (else (expt-iter (* a b) b (- n 1)))))
+
+(define (even? n)
+  (= (remainder n 2) 0))
+
+;ex 1.17
+(define (double a)
+  (* a 2))
+
+(define (halve a)
+  (/ a 2))
+
+(define (multi1 a b)
+  (cond ((= b 0) 0)
+        ((even? b) (multi1 (double a) (halve b))) 
+        (else (+ a (multi1 a (- b 1))))))
+
+;ex 1.18
+(define (multi2 a b)
+  (multi-iter a b 0))
+
+(define (multi-iter a b x) 
+  (cond ((= b 0) x)
+        ((even? b) (multi-iter (double a) (halve b) x))
+        (else (multi-iter a (- b 1) (+ x a)))))
+    
+
+;ex 1.19
+(define (fib n)
+  (fib-iter 1 0 0 1 n))
+
+(define (fib-iter a b p q count)
+  (cond ((= count 0) b)
+        ((even? count)
+         (fib-iter a
+                   b
+                   (+ (* p p) (* q q))  
+                   (+ (* 2 p q) (* q q))
+                   (/ count 2)))
+        (else (fib-iter (+ (* b q) (* a q) (* a p))
+                        (+ (* b p) (* a q))
+                        p
+                        q
+                        (- count 1)))))
+
+;1.2.6
+(use srfi-27)
+
+(define (expmod base exp m) 
+  (cond ((= exp 0) 1)
+        ((even? exp) (remainder (square (expmod base (/ exp 2) m)) m)) 
+        (else (remainder (* base (expmod base (- exp 1) m)) m))))
+
+
+(define (fermat-test n) 
+  (define (try-it a) (= (expmod a n n) a))
+  (try-it (+ 1 (random-integer (- n 1)))))
+
+(define (fast-prime? n times) 
+  (cond ((= times 0) #t)
+        ((fermat-test n) (fast-prime? n (- times 1))) 
+        (else #f)))
+
+;ex 1.21
+
+(define (smallest-divisor n) (find-divisor n 2)) 
+(define (find-divisor n test-divisor)
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor) (else (find-divisor n (+ test-divisor 1)))))
+(define (divides? a b) (= (remainder b a) 0))
+
+(define (prime? n)
+  (= n (smallest-divisor n)))
+
+
+;ex 1.22
+(define (runtime)
+  (use srfi-11)
+  (let-values (((a b) (sys-gettimeofday)))
+              (+ (* a 1000000) b)))
+
+
+(define (timed-prime-test n) 
+  (newline)
+  (display n)
+  (start-prime-test n (runtime)))
+
+(define (start-prime-test n start-time) 
+  (if (prime? n) (report-prime (- (runtime) start-time)))) 
+
+(define (report-prime elapsed-time)
+  (display " *** ") (display elapsed-time))
+
+
+(define (search-for-primes n j)
+  (search-for-primes-iter n j))
+
+(define (search-for-primes-iter i j)
+    (cond ((> i j) #t)
+          ((even? i) (search-for-primes-iter (+ i 1) j))
+          (else
+            (begin
+              (timed-prime-test i)
+              (search-for-primes-iter (+ i 2) j)))))
+
+
+; 1009 1013 1019
+; 10007 10009 10037
+; 100003 100019 100043
+; 1000003 1000033 1000037
+
+; 100000007 100000037 100000039
+; 1000000000039
+; 1000000000000037
+
+;ex 1.23
+
+(define (smallest-divisor2 n) (find-divisor2 n 3)) 
+
+(define (find-divisor2 n test-divisor)
+
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor) 
+        (else (find-divisor2 n (+ test-divisor 2)))))
+
+;ex 1.24
+
+(define (timed-prime-test n times) 
+  (newline)
+  (display n)
+  (start-prime-test n (runtime) times))
+
+(define (start-prime-test n start-time times) 
+  (if (fast-prime? n times) (report-prime (- (runtime) start-time)))) 
+
+(define (fast-prime? n times) 
+  (cond ((= times 0) #t)
+        ((fermat-test n) (fast-prime? n (- times 1))) 
+        (else #f)))
+
+
+(define (fermat-test n) 
+  (define (try-it a) (= (expmod a n n) a))
+  (try-it (+ 1 (random-integer (- n 1)))))
+
+;ex 1.25
+(define (expmod base exp m) 
+  (cond ((= exp 0) 1)
+        ((even? exp) (remainder (square (expmod base (/ exp 3) m)) m)) 
+        (else (remainder (* base (expmod base (- exp 1) m)) m))))
+
+(define (fermat-test-failed n) 
+  (define (try-it a) (= (expmod-failed a n n) a))
+  (try-it (+ 1 (random-integer (- n 1)))))
+
+(define (expmod-failed base exp m) 
+  (remainder (fast-expt base exp) m))
+
+(define (fast-expt b n) 
+  (cond ((= n 0) 1)
+        ((even? n) (square (fast-expt b (/ n 2)))) 
+        (else (* b (fast-expt b (- n 1))))))
+
+;ex 1.26
+(define (expmod base exp m) 
+  (cond ((= exp 0) 1)
+        ((even? exp) (remainder (* (expmod base (/ exp 2) m) (expmod base (/ exp 2) m)) 57 m))
+        (else
+          (remainder (* base (expmod base (- exp 1) m)) m))))
+
+
+;ex 1.27
+;
+(define (expmod base exp m) 
+  (cond ((= exp 0) 1)
+        ((even? exp) (remainder (square (expmod base (/ exp 2) m)) m)) 
+        (else (remainder (* base (expmod base (- exp 1) m)) m))))
+
+(define (carmichael-test n)
+  (carmichael-test-iter n 1 0))
+
+(define (carmichael-test-iter n a count)
+  (cond ((= a n) count)
+        ((= (expmod a n n) a) (carmichael-test-iter n (+ a 1) (+ count 1)))
+        (else (carmichael-test-iter n (+ a 1) count))))
+
+;carmicael test
+;561, 1105, 1729, 2465, 2821, 6601, 8911
+
+;ex 1.28
+
+(define (miller-rabin-expmod base exp m) 
+  (cond ((= exp 0) 1) 
+        ((even? exp) (squaremod-with-check (miller-rabin-expmod base (/ exp 2) m) m))
+        (else 
+          (remainder (* base (miller-rabin-expmod base (- exp 1) m)) m)))) 
+
+(define (squaremod-with-check x m) 
+    (if (and (= (remainder (square x) m) 1) (not (= x 1)) (not (= x (- m 1)))) 
+      0 
+      (remainder (square x) m)))
+
+
+(define (miller-rabin-test n) 
+  (define (check-it x) (and (not (= x 0)) (= x 1))) 
+  (define (try-it a) 
+    (check-it (miller-rabin-expmod a (- n 1) n))) 
+
+  (try-it (+ 1 (random-integer (- n 1))))) 
+
+(define (fast-prime? n times) 
+  (cond ((= times 0) #t) 
+        ((miller-rabin-test n) (fast-prime? n (- times 1))) 
+        (else #f))) 
+
