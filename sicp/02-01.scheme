@@ -82,31 +82,31 @@
 
 ;ex 2.4
 
-(define (cons x y) 
-  (lambda (m) (m x y)))
-
-(define (car z)
-  (z (lambda (p q) p)))
-
-(define (cdr z)
-  (z (lambda (p q) q)))
-
+;(define (cons x y) 
+;  (lambda (m) (m x y)))
+;
+;(define (car z)
+;  (z (lambda (p q) p)))
+;
+;(define (cdr z)
+;  (z (lambda (p q) q)))
+;
 ;ex 2.5
-(define (cons x y)
-  (* (expt 2 x) (expt 3 y)))
-
-(define (car z)
-  (count-divisor z 2))
-
-(define (cdr z)
-  (count-divisor z 3))
-
-(define (count-divisor x y)
-  (define (iter x y i) 
-             (if (= (modulo x y) 0) 
-               (iter (/ x y) y (+ i 1)) 
-               i))
-  (iter x y 0))
+;(define (cons x y)
+;  (* (expt 2 x) (expt 3 y)))
+;
+;(define (car z)
+;  (count-divisor z 2))
+;
+;(define (cdr z)
+;  (count-divisor z 3))
+;
+;(define (count-divisor x y)
+;  (define (iter x y i) 
+;             (if (= (modulo x y) 0) 
+;               (iter (/ x y) y (+ i 1)) 
+;               i))
+;  (iter x y 0))
 
 ;ex 2.6
 (define zero (lambda (f) (lambda (x) x))) 
@@ -117,3 +117,150 @@
 (define one (lambda (f) (lambda (x)(f x))))
 (define two (lambda (f) (lambda (x)(f (f x)))))
 
+
+
+
+;ex 2.7
+(define (make-interval a b) (cons a b))
+(define (lower-bound z) (car z))
+(define (upper-bound z) (cdr z))
+
+
+;ex 2.8
+(define (add-interval x y)
+  (make-interval (+ (lower-bound x) (lower-bound y))
+               (+ (upper-bound x) (upper-bound y))))
+
+(define (sub-interval x y)
+  (make-interval (- (lower-bound x) (upper-bound y))
+               (- (upper-bound x) (lower-bound y))))
+
+;ex 2.9
+;(c1 - w1)+ (c2 - w2) = (c1 + c2) - (w1 + w2)
+;(c1 + w1)+ (c2 + w2) = (c1 + c2) + (w1 + w2)
+;
+;(c1 - w1) - (c2 + w2) = (c1 - c2) - (w1 + w2)
+;(c1 + w1) - (c2 = w2) = (c1 - c2) + (w1 + w2)
+;
+;(c1 - w1) * (c2 - w2) = c1c2 - w1c2 - c1w2 + w1w2
+
+;2.10 
+(define (div-interval x y) 
+  (mul-interval 
+    x
+    (make-interval 
+      (/ 1.0 (upper-bound y))
+      (/ 1.0 (lower-bound y)))))
+
+
+(define (new-div-interval x y)
+  (let ((y1 (lower-bound y)) (y2 (upper-bound y)))
+    (if (and (< y1 0) (< 0 y2))
+      (display "error") 
+      (mul-interval 
+        x
+        (make-interval (/ 1.0 y2) (/ 1.0 y1))))))
+
+;ex 2.10
+(define (make-interval a b) (cons a b))
+(define (lower-bound z) (car z))
+(define (upper-bound z) (cdr z))
+
+(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) (lower-bound y)))
+        (p2 (* (lower-bound x) (upper-bound y))) 
+        (p3 (* (upper-bound x) (lower-bound y))) 
+        (p4 (* (upper-bound x) (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4) 
+                   (max p1 p2 p3 p4))))
+
+(define (new-mul-interval x y)
+  (let ((xl (lower-bound x))
+        (xu (upper-bound x)) 
+        (yl (lower-bound y)) 
+        (yu (upper-bound y)))
+    (cond ((> xl 0)
+           (cond ((> yl 0) (make-interval (* xl yl) (* xu yu)))
+                 ((< yu 0) (make-interval (* xu yl) (* xl yu)))
+                 (else (make-interval (* xu yl) (* xu yu)))))
+          ((< xu 0)
+           (cond ((> yl 0) (make-interval (* xl yu) (* xu yl)))
+                 ((< yu 0) (make-interval (* xu yu) (* xl yl)))
+                 (else (make-interval (* xl yu) (* xl yl)))))
+          (else 
+           (cond ((> yl 0) (make-interval (* xl yu) (* xu yu)))
+                 ((< yu 0) (make-interval (* xu yl) (* xl yl)))
+                 (else 
+                   (let ((p1 (* (lower-bound x) (lower-bound y)))
+                         (p2 (* (lower-bound x) (upper-bound y))) 
+                         (p3 (* (upper-bound x) (lower-bound y))) 
+                         (p4 (* (upper-bound x) (upper-bound y))))
+                     (make-interval (min p1 p2 p3 p4) 
+                                    (max p1 p2 p3 p4)))))))))
+
+
+(define (interval-test method x1 y1 x2 y2)
+    (display #`"(,|x1|, ,|y1|), (,|x2|, ,|y2|)  ")
+   (display (method (make-interval x1 y1) (make-interval x2 y2))))
+
+;(display "mul-interval") (newline)
+;(mul-test mul-interval  1  2  3  4)(newline)
+;(mul-test mul-interval -1  2  3  4)(newline)
+;(mul-test mul-interval -3 -2  3  4)(newline)
+;(mul-test mul-interval  1  2 -3  4)(newline)
+;(mul-test mul-interval -1  2 -3  4)(newline)
+;(mul-test mul-interval -3 -2 -3  4)(newline)
+;(mul-test mul-interval  1  2 -5 -4)(newline)
+;(mul-test mul-interval -1  2 -5 -4)(newline)
+;(mul-test mul-interval -3 -2 -5 -4)(newline)
+;(newline)
+;(display "new-mul-interval") (newline)
+;(mul-test new-mul-interval  1  2  3  4)(newline)
+;(mul-test new-mul-interval -1  2  3  4)(newline)
+;(mul-test new-mul-interval -3 -2  3  4)(newline)
+;(mul-test new-mul-interval  1  2 -3  4)(newline)
+;(mul-test new-mul-interval -1  2 -3  4)(newline)
+;(mul-test new-mul-interval -3 -2 -3  4)(newline)
+;(mul-test new-mul-interval  1  2 -5 -4)(newline)
+;(mul-test new-mul-interval -1  2 -5 -4)(newline)
+;(mul-test new-mul-interval -3 -2 -5 -4)(newline)
+
+
+;2.12
+(define (make-center-percent c p)
+  (make-interval (- c (/ (* c p) 100)) (+ c (/ (* c p) 100))))
+
+(define (width i)
+  (/ (- (upper-bound i) (lower-bound i)) 2))
+
+(define (center i)
+  (/ (+ (lower-bound i) (upper-bound i)) 2))
+
+(define (percent i)
+  (* (/ (width i) (center i)) 100))
+
+;2.13
+(define (percent-test method c1 p1 c2 p2)
+    (display #`"(,|c1|, ,|p1|), (,|c2|, ,|p2|)  ")
+   (display (method (make-center-percent c1 p1) (make-center-percent c2 p2))))
+
+(define (par1 r1 r2)
+  (div-interval (mul-interval r1 r2)
+                (add-interval r1 r2)))
+
+(define (par2 r1 r2)
+  (let ((one (make-interval 1 1)))
+    (div-interval
+      one (add-interval (div-interval one r1)
+                        (div-interval one r2)))))
+
+;(percent-test par1 3.0 0 14.0 0)(newline)
+;(percent-test par2 3.0 0 14.0 0)(newline)
+;(percent-test par1 1000.0 50 2000.0 50)(newline)
+;(percent-test par2 1000.0 50 2000.0 50)(newline)
+
+(interval-test par1 2.0 15.0 3.0 10.0)(newline)
+(interval-test par2 2.0 15.0 3.0 10.0)(newline)
+
+(percent-test par1 8.5 0 6.5 0)(newline)
+(percent-test par2 8.5 0 6.5 0)(newline)
