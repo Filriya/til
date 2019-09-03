@@ -1,0 +1,58 @@
+.languages-switcher {
+    position: fixed;
+    bottom: 200px;
+    right: 10px;
+
+}
+.select-wrapper {
+    /* display: none; */
+}
+
+.label-wrapper {
+    width: 180px;
+    color: #f8f8f8;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+}
+
+.label {
+    background: #171717;
+    /* transition: opacity 0.5s linear; */
+}
+
+.label:not(.currentValue) {
+    height: 0;
+    opacity: 0;
+    padding: 0;
+}
+
+.label:not(.currentValue):hover {
+    background: #404040;
+}
+
+.opened .label, .currentValue {
+    height: auto;
+    opacity: 1;
+    padding: 15px;
+}
+
+.opened .currentValue {
+    color: #707070;
+}
+
+.currentValue:after {
+    content: '';
+    border: 5px solid transparent;
+    display: block;
+    border-top: solid 8px white;
+    width: 5px;
+    box-sizing: border-box;
+    position: relative;
+    float: right;
+    top: 10px;
+    right: 6px;
+}
+
+.
