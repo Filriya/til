@@ -1,6 +1,8 @@
 <?php
 
-$array1 = ['hoge'=> 'hogehoge', 'fuga' => 'fugafuga'];
-$array2 = ['hoge'=> 'hogehogehoge', 'piyo' => 'piyopiyo'];
+$array = ['a' => 'A', 'b' => 'B' ];
 
-var_dump(array_merge($array1, $array2));
+
+$hoge = $array['c'] ?? 'fuga';
+
+echo $hoge;
