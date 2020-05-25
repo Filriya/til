@@ -1,7 +1,16 @@
-const filename = "hogehoge"
+const hoge = async () => {
+  let count = 0
+  try {
+    return 'hoge'
+  } finally {
+    count++
+    console.log(count)
+  }
+}
 
-const extension = filename.split('.').pop()
+const main = async () => {
+  const h = await hoge()
+  console.log(h)
+}
 
-console.log(extension)
-
-
+main()
