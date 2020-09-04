@@ -5,6 +5,6 @@
   "main": "index.js",
   "devDependencies": {},
   "dependencies": {
-    "mithril": "^0.2.5"
+    "mithril": "^2.0.4"
   }
 }
